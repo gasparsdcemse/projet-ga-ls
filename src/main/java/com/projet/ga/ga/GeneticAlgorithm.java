@@ -144,4 +144,63 @@ public abstract class GeneticAlgorithm {
 
     // Sous-classes (GA1/GA2/GA3) peuvent surcharger
     protected void crossover(Solution c1, Solution c2) { /* no-op par défaut */ }
+
+    // --- Opérateurs de croisement de base (ajoutés) ---
+
+    /**
+     * Opérateur 1: Single-point temporel (de GA1)
+     * Échange P et X à partir d'une période "cut" aléatoire.
+     * Correspond au 'single_point_crossover' de l'article (Fig. 3, gauche [cite: 527]).
+     */
+    protected void op_SinglePointTemporal(Solution a, Solution b){
+        int cut = rnd.nextInt(ins.T);
+        for (int j=0;j<ins.J;j++){
+            for (int t=cut;t<ins.T;t++){
+                // swap prices with clamp
+                double tp = a.P[j][t];
+                a.P[j][t] = clamp(b.P[j][t], ins.pmin[j][t], ins.pmax[j][t]); 
+                b.P[j][t] = clamp(tp,          ins.pmin[j][t], ins.pmax[j][t]);
+                // swap production
+                double tx = a.X[j][t];
+                a.X[j][t] = b.X[j][t];
+                b.X[j][t] = tx;
+            }
+        }
+    }
+
+    /**
+     * Opérateur 2: Mélange de prix pour un produit (de GA2)
+     * Mélange convexe (blend) des prix pour un produit j* aléatoire.
+     * Correspond au 'prices_crossover' de l'article (Eq. 18 [cite: 648]).
+     */
+    protected void op_PriceBlend(Solution a, Solution b){
+        int j = rnd.nextInt(ins.J);
+        for (int t=0; t<ins.T; t++){
+            double r = rnd.nextDouble();
+            double pa = a.P[j][t], pb = b.P[j][t];
+            a.P[j][t] = clamp(r*pa + (1-r)*pb, ins.pmin[j][t], ins.pmax[j][t]);
+            b.P[j][t] = clamp((1-r)*pa + r*pb, ins.pmin[j][t], ins.pmax[j][t]);
+        }
+    }
+
+    /**
+     * Opérateur 3: Échange de production pour une période (de GA3)
+     * Échange les productions X pour une période t* aléatoire.
+     * Correspond à la partie "production" du 'problem_specific_crossover' de l'article (Fig. 3, droite [cite: 527, 566]).
+     */
+    protected void op_ProblemSpecific_SwapProd(Solution a, Solution b){
+        int t = rnd.nextInt(ins.T);
+        for (int j=0;j<ins.J;j++){
+            double tx = a.X[j][t];
+            a.X[j][t] = b.X[j][t];
+            b.X[j][t] = tx;
+        }
+    }
+
+    /**
+     * Utilitaire pour borner une valeur (ajouté)
+     */
+    protected double clamp(double x,double lo,double hi){
+        return Math.max(lo, Math.min(hi, x));
+    }
 }

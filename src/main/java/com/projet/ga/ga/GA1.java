@@ -8,16 +8,14 @@ public class GA1 extends GeneticAlgorithm {
 
     @Override
     protected void crossover(Solution a, Solution b){
-        int cut = rnd.nextInt(ins.T);
-        for (int j=0;j<ins.J;j++){
-            for (int t=cut;t<ins.T;t++){
-                // swap prices with clamp
-                double tp = a.P[j][t]; a.P[j][t] = clamp(b.P[j][t], ins.pmin[j][t], ins.pmax[j][t]); 
-                b.P[j][t] = clamp(tp,          ins.pmin[j][t], ins.pmax[j][t]);
-                // swap production
-                double tx = a.X[j][t]; a.X[j][t] = b.X[j][t]; b.X[j][t] = tx;
-            }
-        }
+        // GA1 = single_point_crossover + problem_specific_crossover (Table 3 )
+        
+        // 1. Applique l'opérateur "single point temporel"
+        op_SinglePointTemporal(a, b);
+        
+        // 2. Applique l'opérateur "problem specific" (partie swap production)
+        op_ProblemSpecific_SwapProd(a, b);
     }
-    private double clamp(double x,double lo,double hi){ return Math.max(lo, Math.min(hi, x)); }
+    
+    // 'clamp' est maintenant dans GeneticAlgorithm.java
 }

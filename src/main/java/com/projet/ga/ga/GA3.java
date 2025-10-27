@@ -8,20 +8,14 @@ public class GA3 extends GeneticAlgorithm {
 
     @Override
     protected void crossover(Solution a, Solution b){
-        // 1) swap production of one period t* for all products
-        int t = rnd.nextInt(ins.T);
-        for (int j=0;j<ins.J;j++){
-            double tx = a.X[j][t]; a.X[j][t] = b.X[j][t]; b.X[j][t] = tx;
-        }
+        // GA3 = problem_specific_crossover + prices_crossover (Table 3 )
+        
+        // 1. Applique l'opérateur "problem specific" (partie swap production)
+        op_ProblemSpecific_SwapProd(a, b);
 
-        // 2) prices-only blend for one product j*
-        int j = rnd.nextInt(ins.J);
-        for (int tt=0; tt<ins.T; tt++){
-            double r = rnd.nextDouble();
-            double pa = a.P[j][tt], pb = b.P[j][tt];
-            a.P[j][tt] = clamp(r*pa + (1-r)*pb, ins.pmin[j][tt], ins.pmax[j][tt]);
-            b.P[j][tt] = clamp((1-r)*pa + r*pb, ins.pmin[j][tt], ins.pmax[j][tt]);
-        }
+        // 2. Applique l'opérateur "price blend"
+        op_PriceBlend(a, b);
     }
-    private double clamp(double x,double lo,double hi){ return Math.max(lo, Math.min(hi, x)); }
+    
+    // 'clamp' est maintenant dans GeneticAlgorithm.java
 }
