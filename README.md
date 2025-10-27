@@ -1,4 +1,3 @@
-
 -----
 
 # Projet Java — Algorithmes génétiques avec recherche locale 🧬
@@ -8,16 +7,17 @@
 
 -----
 
-## 🎯 Objectif du projet
+## 1. 🎯 Objectif du projet
 
 Implémenter **trois algorithmes génétiques (GA1, GA2, GA3)** avec **recherche locale (LS)** pour résoudre un problème de planification conjointe des prix et des lots de production avec demande non linéaire.
 
-Chaque version d'AG est différenciée uniquement par **l’opérateur de croisement** :
-| Algorithme | Opérateur de Croisement | Description |
-| :---: | :---: | :--- |
-| **GA1** | *Single-point temporel* | Échange de la fin d’horizon (à partir d’une période aléatoire). |
-| **GA2** | *Produit* | Mélange convexe des prix d’un seul produit. |
-| **GA3** | *Mixte* | Échange de productions d’une période + mélange des prix d’un produit. |
+Chaque version d'AG est différenciée par la **combinaison d'opérateurs de croisement** utilisée, conformément à l'article (Table 3) :
+
+| Algorithme | Combinaison d'Opérateurs de Croisement |
+| :---: | :--- |
+| **GA1** | **Single-point temporel** (échange fin d'horizon) + **Problem-specific** (échange production 1 période) |
+| **GA2** | **Single-point temporel** (échange fin d'horizon) + **Prices-crossover** (mélange prix 1 produit) |
+| **GA3** | **Problem-specific** (échange production 1 période) + **Prices-crossover** (mélange prix 1 produit) |
 
 Une **recherche locale hybride (VND - Variable Neighborhood Descent)** améliore les solutions via deux voisinages :
 
@@ -26,7 +26,95 @@ Une **recherche locale hybride (VND - Variable Neighborhood Descent)** améliore
 
 -----
 
-## 🧩 Structure du projet
+## 2. Conception (Diagramme de Classes)
+
+Voici l'architecture logicielle du projet, montrant les relations entre les classes principales :
+
+```mermaid
+classDiagram
+    direction LR
+
+    class Main {
+        +main(String[] args)
+    }
+
+    class GeneticAlgorithm {
+        <<abstract>>
+        #Instance ins
+        #List~Solution~ population
+        +run() : Solution
+        #initPopulation()
+        #evaluate(Solution)
+        #crossover(Solution, Solution)*
+        #op_SinglePointTemporal(Solution, Solution)
+        #op_PriceBlend(Solution, Solution)
+        #op_ProblemSpecific_SwapProd(Solution, Solution)
+    }
+
+    class GA1 {
+        +crossover(Solution, Solution)
+    }
+    class GA2 {
+        +crossover(Solution, Solution)
+    }
+    class GA3 {
+        +crossover(Solution, Solution)
+    }
+
+    class Instance {
+        +int J, T
+        +double[] capacity
+        +double[][] pmin, pmax
+        +double[][] c, h, a, b, gamma
+    }
+    class Solution {
+        +double[][] P, X, I
+        +int[][] Y
+        +double fitness
+        +clone() : Solution
+        +emptyLike(Instance) : Solution
+    }
+
+    class LocalSearch {
+        <<static>>
+        +apply(Instance, Solution, Random)
+        +vndOnBest(Instance, Solution, Random)
+        -lsProduct(Instance, Solution)
+        -lsPeriod(Instance, Solution)
+    }
+    
+    class ModelUtils {
+        <<Utility Classes>>
+        +Objective.fitness(...)
+        +Demand.allDemands(...)
+        +Feasibility.recomputeInventory(...)
+    }
+
+    Main ..> GeneticAlgorithm : crée et exécute
+    Main ..> DemoInstances : obtient
+    DemoInstances ..> Instance : crée
+
+    GeneticAlgorithm <|-- GA1
+    GeneticAlgorithm <|-- GA2
+    GeneticAlgorithm <|-- GA3
+
+    GeneticAlgorithm o-- "1" Instance : détient
+    GeneticAlgorithm o-- "*" Solution : "population"
+    
+    GeneticAlgorithm ..> LocalSearch : utilise
+    GeneticAlgorithm ..> ModelUtils : utilise
+
+    LocalSearch ..> ModelUtils : utilise
+    LocalSearch ..> Instance : utilise
+    LocalSearch ..> Solution : modifie
+    
+    ModelUtils ..> Instance : dépend de
+    ModelUtils ..> Solution : dépend de
+````
+
+-----
+
+## 3\. 🧩 Structure du projet
 
 Le projet est organisé comme suit :
 
@@ -61,7 +149,7 @@ projet-ga-ls/
 
 -----
 
-## ⚙️ Compilation et exécution (PowerShell)
+## 4\. ⚙️ Compilation et exécution (PowerShell)
 
 ### 💻 1. Compilation
 
@@ -77,8 +165,8 @@ $exclude = @('InstanceReader.java','Selection.java','AdaptiveWeights.java','Mode
 
 # Récupération de tous les fichiers .java à compiler
 $files = Get-ChildItem -Recurse -Path src\main\java -Filter *.java |
-         Where-Object { $exclude -notcontains $_.Name } |
-         ForEach-Object { $_.FullName }
+  	 	 	Where-Object { $exclude -notcontains $_.Name } |
+  	 	 	ForEach-Object { $_.FullName }
 
 # Compilation des fichiers
 javac -encoding UTF-8 -d bin $files
@@ -112,7 +200,7 @@ java -cp bin com.projet.ga.app.Main GA1 1234 40 70 0.9 0.2 0.2
 
 -----
 
-## 📊 Résultats
+## 5\. 📊 Résultats
 
 ### Affichage Console
 
@@ -135,7 +223,7 @@ GA3,1234,70,0.9,0.2,0.2,40,12345.821,true,1120
 
 -----
 
-## 🧠 Notes méthodologiques
+## 6\. 🧠 Notes méthodologiques
 
 | Concept | Détails |
 | :--- | :--- |
@@ -157,7 +245,7 @@ GA3,1234,70,0.9,0.2,0.2,40,12345.821,true,1120
 
 -----
 
-## 📈 Validation et Tests
+## 7\. 📈 Validation et Tests
 
 Pour peupler le fichier `results.csv` avec plusieurs exécutions (pour une analyse statistique des performances) :
 
@@ -177,7 +265,7 @@ Les données du fichier `results.csv` peuvent ensuite être analysées (par exem
 
 -----
 
-## 🧾 Auteurs / Encadrement
+## 8\. 🧾 Auteurs / Encadrement
 
 **Projet Java** — Implémentation des 3 Algorithmes Génétiques avec Recherche Locale
 
