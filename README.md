@@ -1,8 +1,8 @@
 -----
 
-# Projet Java — Algorithmes génétiques avec recherche locale 🧬
+# Projet Java — Algorithmes génétiques avec recherche locale
 
-**Sujet :** Joint Lot-Sizing and Dynamic Pricing Problem with Nonlinear Demand 💰
+**Sujet :** Joint Lot-Sizing and Dynamic Pricing Problem with Nonlinear Demand
 **Source :** *Matheuristics vs. Metaheuristics for Joint Lot-Sizing and Dynamic Pricing Problem with Nonlinear Demand*
 
 -----
