@@ -7,7 +7,7 @@
 
 -----
 
-## 1. 🎯 Objectif du projet
+## 1. Objectif du projet
 
 Implémenter **trois algorithmes génétiques (GA1, GA2, GA3)** avec **recherche locale (LS)** pour résoudre un problème de planification conjointe des prix et des lots de production avec demande non linéaire.
 
@@ -114,7 +114,7 @@ classDiagram
 
 -----
 
-## 3\. 🧩 Structure du projet
+## 3\. Structure du projet
 
 Le projet est organisé comme suit :
 
@@ -149,9 +149,9 @@ projet-ga-ls/
 
 -----
 
-## 4\. ⚙️ Compilation et exécution (PowerShell)
+## 4. Compilation et exécution (PowerShell)
 
-### 💻 1. Compilation
+### 1. Compilation
 
 Depuis le dossier racine `projet-ga-ls` :
 
@@ -172,7 +172,7 @@ $files = Get-ChildItem -Recurse -Path src\main\java -Filter *.java |
 javac -encoding UTF-8 -d bin $files
 ```
 
-### ▶️ 2. Exécution
+### 2. Exécution
 
 La commande générale d'exécution est :
 
@@ -200,7 +200,7 @@ java -cp bin com.projet.ga.app.Main GA1 1234 40 70 0.9 0.2 0.2
 
 -----
 
-## 5\. 📊 Résultats
+## 5. Résultats
 
 ### Affichage Console
 
@@ -223,7 +223,8 @@ GA3,1234,70,0.9,0.2,0.2,40,12345.821,true,1120
 
 -----
 
-## 6\. 🧠 Notes méthodologiques
+## 6. Notes méthodologiques
+
 
 | Concept | Détails |
 | :--- | :--- |
@@ -245,7 +246,8 @@ GA3,1234,70,0.9,0.2,0.2,40,12345.821,true,1120
 
 -----
 
-## 7\. 📈 Validation et Tests
+
+## 7. Validation et Tests
 
 Pour peupler le fichier `results.csv` avec plusieurs exécutions (pour une analyse statistique des performances) :
 
@@ -265,7 +267,8 @@ Les données du fichier `results.csv` peuvent ensuite être analysées (par exem
 
 -----
 
-## 8\. 🧾 Auteurs / Encadrement
+
+## 8. Auteurs / Encadrement
 
 **Projet Java** — Implémentation des 3 Algorithmes Génétiques avec Recherche Locale
 
